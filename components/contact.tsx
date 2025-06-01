@@ -115,7 +115,7 @@ export function Contact({ onBack }: ContactProps) {
                         <TypeWriter text="🔗 GITHUB: FGGen" speed={25} delay={1300} />
                       </a>
                       <a 
-                        href="https://www.linkedin.com/in/franco-gentile" 
+                        href="https://www.linkedin.com/in/franco-gentile-0320a511b/" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="block hover:bg-green-400 hover:text-black px-2 py-1 transition-colors border border-green-400 text-center"
