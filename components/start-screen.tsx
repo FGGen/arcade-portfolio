@@ -160,15 +160,11 @@ export function StartScreen({ onStart }: StartScreenProps) {
                   disabled={isPlayingSound}
                   className={`px-4 py-2 transition-colors focus:outline-none border border-green-400 ${
                     isPlayingSound 
-                      ? 'bg-green-400 text-black opacity-75 cursor-wait' 
+                      ? 'opacity-75 cursor-wait' 
                       : 'hover:bg-green-400 hover:text-black focus:bg-green-400 focus:text-black'
                   }`}
                 >
-                  {isPlayingSound ? (
-                    <TypeWriter text="♪ PLAYING..." speed={35} />
-                  ) : (
-                    <TypeWriter text="▶ YES" speed={35} delay={150} />
-                  )}
+                  <TypeWriter text="▶ YES" speed={35} delay={150} />
                 </button>
                 <button
                   onClick={handleNoClick}
@@ -186,11 +182,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
 
             {currentStep >= 3 && (
               <div className={`text-sm mt-12 ${blinkVisible ? "opacity-100" : "opacity-0"} transition-opacity`}>
-                {isPlayingSound ? (
-                  <TypeWriter text="♪ COIN SOUND PLAYING..." speed={30} />
-                ) : (
-                  <TypeWriter text="PRESS ENTER OR CLICK YES TO START" speed={30} delay={500} />
-                )}
+                <TypeWriter text="PRESS ENTER OR CLICK YES TO START" speed={30} delay={500} />
               </div>
             )}
           </>
