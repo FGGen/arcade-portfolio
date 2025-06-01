@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { TypeWriter } from "@/components/typewriter"
 
 interface StartScreenProps {
@@ -10,6 +10,23 @@ interface StartScreenProps {
 export function StartScreen({ onStart }: StartScreenProps) {
   const [blinkVisible, setBlinkVisible] = useState(true)
   const [currentStep, setCurrentStep] = useState(0)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  useEffect(() => {
+    // Initialize audio
+    audioRef.current = new Audio('/arcade-portfolio/coin-sound.mp3')
+    audioRef.current.volume = 0.7 // Set volume to 70%
+    
+    // Preload the audio
+    audioRef.current.load()
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,10 +36,29 @@ export function StartScreen({ onStart }: StartScreenProps) {
     return () => clearInterval(interval)
   }, [])
 
+  const playCoinSound = () => {
+    if (audioRef.current) {
+      // Reset the audio to the beginning and play
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch((error) => {
+        console.log('Audio play failed:', error)
+        // Fallback: still continue with the game even if audio fails
+      })
+    }
+  }
+
+  const handleStart = () => {
+    playCoinSound()
+    // Small delay to let the sound start playing before transition
+    setTimeout(() => {
+      onStart()
+    }, 100)
+  }
+
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === "1") {
-        onStart()
+        handleStart()
       }
       if (e.key === "2" || e.key === "n" || e.key === "N") {
         document.dispatchEvent(new CustomEvent("turnOffScreen"))
@@ -31,7 +67,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
 
     window.addEventListener("keydown", handleKeyPress)
     return () => window.removeEventListener("keydown", handleKeyPress)
-  }, [onStart])
+  }, [])
 
   const handleNoClick = () => {
     document.dispatchEvent(new CustomEvent("turnOffScreen"))
@@ -58,14 +94,14 @@ export function StartScreen({ onStart }: StartScreenProps) {
             {currentStep >= 3 && (
               <div className="flex justify-center items-center space-x-16 text-xl">
                 <button
-                  onClick={onStart}
-                  className="hover:bg-green-400 hover:text-black px-4 py-2 transition-colors focus:outline-none focus:bg-green-400 focus:text-black"
+                  onClick={handleStart}
+                  className="hover:bg-green-400 hover:text-black px-4 py-2 transition-colors focus:outline-none focus:bg-green-400 focus:text-black border border-green-400"
                 >
                   <TypeWriter text="▶ YES" speed={35} delay={150} />
                 </button>
                 <button
                   onClick={handleNoClick}
-                  className="px-4 py-2 opacity-50 hover:opacity-100 hover:bg-red-400 hover:text-black transition-colors focus:outline-none focus:bg-red-400 focus:text-black"
+                  className="px-4 py-2 opacity-50 hover:opacity-100 hover:bg-red-400 hover:text-black transition-colors focus:outline-none focus:bg-red-400 focus:text-black border border-red-400"
                 >
                   <TypeWriter text="NO" speed={35} delay={250} />
                 </button>
