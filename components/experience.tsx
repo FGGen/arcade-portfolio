@@ -1,0 +1,123 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { TypeWriter } from "@/components/typewriter"
+
+interface ExperienceProps {
+  onBack: () => void
+}
+
+export function Experience({ onBack }: ExperienceProps) {
+  const [showContent, setShowContent] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowContent(true), 600)
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "Backspace") {
+        onBack()
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyPress)
+    return () => window.removeEventListener("keydown", handleKeyPress)
+  }, [onBack])
+
+  const experiences = [
+    {
+      company: "DUALBOOT PARTNERS",
+      role: "QA AUTOMATION",
+      period: "MAY 2024 - PRESENT",
+      achievements: [
+        "AUTOMATED TEST FRAMEWORKS +40% COVERAGE",
+        "API TESTING SUITES IMPLEMENTATION",
+        "GITLAB CI/CD PIPELINES -30% MANUAL QA",
+        "DATABASE VALIDATIONS & DATA INTEGRITY",
+      ],
+      tech: "PLAYWRIGHT | TYPESCRIPT | AWS | GITLAB",
+    },
+    {
+      company: "NIMBLE.LA",
+      role: "QA ENGINEER",
+      period: "JUL 2022 - MAY 2024",
+      achievements: [
+        "WEB & MOBILE AUTOMATION LEADERSHIP",
+        "85% TEST COVERAGE ACHIEVEMENT",
+        "PERFORMANCE TESTING WITH K6",
+        "CI/CD INTEGRATION -25% RELEASE TIME",
+      ],
+      tech: "CYPRESS | POSTMAN | K6 | MOBILE TESTING",
+    },
+    {
+      company: "ACCENTURE",
+      role: "ASSOCIATE TEST ENGINEER",
+      period: "MAR 2021 - JUL 2022",
+      achievements: [
+        "ENTERPRISE APPLICATIONS TESTING",
+        "UAT SESSIONS WITH STAKEHOLDERS",
+        "AZURE DEVOPS & SHAREPOINT MGMT",
+        "SELENIUM AUTOMATION +20% EFFICIENCY",
+      ],
+      tech: "SELENIUM | AZURE DEVOPS | SHAREPOINT",
+    },
+  ]
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-green-400 font-mono p-6">
+      <div className="w-full max-w-3xl">
+        <div className="flex items-center justify-between mb-6">
+          <button
+            onClick={onBack}
+            className="text-2xl hover:bg-green-400 hover:text-black px-3 py-1 transition-colors focus:outline-none focus:bg-green-400 focus:text-black"
+          >
+            ←
+          </button>
+          <div className="text-2xl">
+            <TypeWriter text="LEVEL 1: EXPERIENCE LOG" speed={40} />
+          </div>
+          <div className="w-12"></div> {/* Spacer for centering */}
+        </div>
+
+        {showContent && (
+          <div className="space-y-6">
+            {experiences.map((exp, index) => (
+              <div key={index} className="border border-green-400 p-4">
+                <div className="text-lg font-bold">
+                  <TypeWriter text={exp.company} speed={30} delay={index * 300} />
+                </div>
+                <div className="text-sm opacity-80">
+                  <TypeWriter text={`${exp.role} | ${exp.period}`} speed={25} delay={index * 300 + 100} />
+                </div>
+                <div className="mt-2 space-y-1">
+                  {exp.achievements.map((achievement, i) => (
+                    <div key={i} className="text-sm">
+                      <TypeWriter text={`• ${achievement}`} speed={20} delay={index * 300 + 200 + i * 100} />
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-2 text-xs opacity-60">
+                  <TypeWriter text={`TECH STACK: ${exp.tech}`} speed={20} delay={index * 300 + 600} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-8 text-center">
+          <button
+            onClick={onBack}
+            className="hover:bg-green-400 hover:text-black px-6 py-2 transition-colors focus:outline-none focus:bg-green-400 focus:text-black"
+          >
+            <TypeWriter text="▶ BACK TO MENU" speed={30} delay={1500} />
+          </button>
+          <div className="text-xs mt-4 opacity-50">
+            <TypeWriter text="PRESS ESC OR ← TO GO BACK" speed={25} delay={1700} />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
