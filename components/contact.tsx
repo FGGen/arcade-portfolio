@@ -63,12 +63,13 @@ export function Contact({ onBack }: ContactProps) {
 
   return (
     <div 
-      className="flex flex-col items-center justify-center min-h-screen bg-black text-green-400 font-mono p-4 md:p-6 relative overflow-hidden"
+      className="min-h-screen bg-black text-green-400 font-mono overflow-y-auto relative"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="w-full max-w-3xl relative z-0">
-        <div className="flex items-center justify-between mb-6 md:mb-8">
+      <div className="container mx-auto px-4 py-6 max-w-3xl min-h-screen flex flex-col">
+        {/* Fixed header */}
+        <div className="flex items-center justify-between mb-6 md:mb-8 flex-shrink-0">
           <button
             onClick={onBack}
             className="text-xl md:text-2xl hover:bg-green-400 hover:text-black px-3 py-1 transition-colors focus:outline-none focus:bg-green-400 focus:text-black border border-green-400"
@@ -81,42 +82,46 @@ export function Contact({ onBack }: ContactProps) {
           <div className="w-12"></div>
         </div>
 
-        {showContent && (
-          <div className="flex justify-center">
-            <div className={`border border-green-400 p-4 md:p-8 max-w-md relative ${flickerActive ? "flicker-border" : ""}`}>
-              <div className="text-center space-y-4">
-                <div className={`text-base md:text-lg font-bold ${flickerActive ? "flicker-text" : ""}`}>
-                  <TypeWriter text="FRANCO GENTILE" speed={35} delay={300} />
-                </div>
-                <div className="text-xs md:text-sm opacity-80">
-                  <TypeWriter text="QA AUTOMATION ENGINEER" speed={30} delay={500} />
+        {/* Centered content */}
+        <div className="flex-1 flex items-center justify-center">
+          {showContent && (
+            <div className="flex justify-center w-full">
+              <div className={`border border-green-400 p-4 md:p-8 max-w-md relative ${flickerActive ? "flicker-border" : ""}`}>
+                <div className="text-center space-y-4">
+                  <div className={`text-base md:text-lg font-bold ${flickerActive ? "flicker-text" : ""}`}>
+                    <TypeWriter text="FRANCO GENTILE" speed={35} delay={300} />
+                  </div>
+                  <div className="text-xs md:text-sm opacity-80">
+                    <TypeWriter text="QA AUTOMATION ENGINEER" speed={30} delay={500} />
+                  </div>
+
+                  <div className="mt-4 md:mt-6 space-y-2 text-xs md:text-sm">
+                    <div className={flickerActive ? "flicker-text" : ""}>
+                      <TypeWriter text="📧 f6gentile@gmail.com" speed={25} delay={700} />
+                    </div>
+                    <div>
+                      <TypeWriter text="📱 +54 9 2262 534023" speed={25} delay={900} />
+                    </div>
+                    <div>
+                      <TypeWriter text="🌍 Remote" speed={25} delay={1100} />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 md:mt-6 text-xs opacity-70">
+                    <TypeWriter text="READY FOR NEW CHALLENGES" speed={25} delay={1300} />
+                  </div>
                 </div>
 
-                <div className="mt-4 md:mt-6 space-y-2 text-xs md:text-sm">
-                  <div className={flickerActive ? "flicker-text" : ""}>
-                    <TypeWriter text="📧 f6gentile@gmail.com" speed={25} delay={700} />
-                  </div>
-                  <div>
-                    <TypeWriter text="📱 +54 9 2262 534023" speed={25} delay={900} />
-                  </div>
-                  <div>
-                    <TypeWriter text="🌍 Remote" speed={25} delay={1100} />
-                  </div>
-                </div>
-
-                <div className="mt-4 md:mt-6 text-xs opacity-70">
-                  <TypeWriter text="READY FOR NEW CHALLENGES" speed={25} delay={1300} />
-                </div>
+                {/* Smooth flicker overlay */}
+                {flickerActive && <div className="flicker-overlay"></div>}
               </div>
-
-              {/* Smooth flicker overlay */}
-              {flickerActive && <div className="flicker-overlay"></div>}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
+        {/* Fixed footer */}
         {showContent && (
-          <div className="mt-6 md:mt-8 text-center space-y-4">
+          <div className="text-center flex-shrink-0 py-4 border-t border-green-400 mt-4 space-y-4">
             <div className={`text-sm opacity-70 ${flickerActive ? "flicker-text" : ""}`}>
               <TypeWriter text="GAME COMPLETED!" speed={30} delay={1500} />
             </div>

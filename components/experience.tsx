@@ -88,12 +88,13 @@ export function Experience({ onBack }: ExperienceProps) {
 
   return (
     <div 
-      className="flex flex-col items-center justify-center min-h-screen bg-black text-green-400 font-mono p-4 md:p-6"
+      className="min-h-screen bg-black text-green-400 font-mono overflow-y-auto"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="w-full max-w-3xl">
-        <div className="flex items-center justify-between mb-6">
+      <div className="container mx-auto px-4 py-6 max-w-3xl min-h-screen flex flex-col">
+        {/* Fixed header */}
+        <div className="flex items-center justify-between mb-6 flex-shrink-0">
           <button
             onClick={onBack}
             className="text-xl md:text-2xl hover:bg-green-400 hover:text-black px-3 py-1 transition-colors focus:outline-none focus:bg-green-400 focus:text-black border border-green-400"
@@ -106,32 +107,36 @@ export function Experience({ onBack }: ExperienceProps) {
           <div className="w-12"></div> {/* Spacer for centering */}
         </div>
 
-        {showContent && (
-          <div className="space-y-4 md:space-y-6">
-            {experiences.map((exp, index) => (
-              <div key={index} className="border border-green-400 p-3 md:p-4">
-                <div className="text-base md:text-lg font-bold">
-                  <TypeWriter text={exp.company} speed={30} delay={index * 300} />
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto">
+          {showContent && (
+            <div className="space-y-4 md:space-y-6 pb-6">
+              {experiences.map((exp, index) => (
+                <div key={index} className="border border-green-400 p-3 md:p-4">
+                  <div className="text-base md:text-lg font-bold">
+                    <TypeWriter text={exp.company} speed={30} delay={index * 300} />
+                  </div>
+                  <div className="text-sm opacity-80">
+                    <TypeWriter text={`${exp.role} | ${exp.period}`} speed={25} delay={index * 300 + 100} />
+                  </div>
+                  <div className="mt-2 space-y-1">
+                    {exp.achievements.map((achievement, i) => (
+                      <div key={i} className="text-xs md:text-sm">
+                        <TypeWriter text={`• ${achievement}`} speed={20} delay={index * 300 + 200 + i * 100} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2 text-xs opacity-60">
+                    <TypeWriter text={`TECH STACK: ${exp.tech}`} speed={20} delay={index * 300 + 600} />
+                  </div>
                 </div>
-                <div className="text-sm opacity-80">
-                  <TypeWriter text={`${exp.role} | ${exp.period}`} speed={25} delay={index * 300 + 100} />
-                </div>
-                <div className="mt-2 space-y-1">
-                  {exp.achievements.map((achievement, i) => (
-                    <div key={i} className="text-xs md:text-sm">
-                      <TypeWriter text={`• ${achievement}`} speed={20} delay={index * 300 + 200 + i * 100} />
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-2 text-xs opacity-60">
-                  <TypeWriter text={`TECH STACK: ${exp.tech}`} speed={20} delay={index * 300 + 600} />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
 
-        <div className="mt-6 md:mt-8 text-center">
+        {/* Fixed footer */}
+        <div className="text-center flex-shrink-0 py-4 border-t border-green-400 mt-4">
           <button
             onClick={onBack}
             className="hover:bg-green-400 hover:text-black px-4 md:px-6 py-2 transition-colors focus:outline-none focus:bg-green-400 focus:text-black border border-green-400"
@@ -139,7 +144,7 @@ export function Experience({ onBack }: ExperienceProps) {
             <TypeWriter text="▶ BACK TO MENU" speed={30} delay={1500} />
           </button>
           <div className="text-xs mt-4 opacity-50">
-            <TypeWriter text="SWIPE → TO GO BACK" speed={25} delay={1700} />
+            <TypeWriter text="SWIPE → TO GO BACK | SCROLL TO SEE MORE" speed={25} delay={1700} />
             <div className="mt-1 hidden md:block">
               <TypeWriter text="OR PRESS ESC" speed={25} delay={1900} />
             </div>
