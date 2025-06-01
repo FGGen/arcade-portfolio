@@ -10,6 +10,7 @@ interface StartScreenProps {
 export function StartScreen({ onStart }: StartScreenProps) {
   const [blinkVisible, setBlinkVisible] = useState(true)
   const [currentStep, setCurrentStep] = useState(0)
+  const [isPlayingSound, setIsPlayingSound] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
@@ -41,14 +42,30 @@ export function StartScreen({ onStart }: StartScreenProps) {
   }, [])
 
   const playCoinSound = async () => {
+    setIsPlayingSound(true)
+    
     if (audioRef.current) {
       try {
         // Reset the audio to the beginning
         audioRef.current.currentTime = 0
         
+        // Create a promise that resolves when audio finishes playing
+        const audioPromise = new Promise<void>((resolve) => {
+          const handleEnded = () => {
+            audioRef.current?.removeEventListener('ended', handleEnded)
+            resolve()
+          }
+          audioRef.current?.addEventListener('ended', handleEnded)
+        })
+        
         // Try to play the audio
         await audioRef.current.play()
-        console.log('Coin sound played successfully')
+        console.log('Coin sound started playing')
+        
+        // Wait for audio to finish
+        await audioPromise
+        console.log('Coin sound finished playing')
+        
       } catch (error) {
         console.log('Audio play failed:', error)
         
@@ -60,26 +77,48 @@ export function StartScreen({ onStart }: StartScreenProps) {
           
           const newAudio = new Audio(audioPath)
           newAudio.volume = 0.7
+          
+          // Create promise for the new audio instance
+          const newAudioPromise = new Promise<void>((resolve) => {
+            const handleEnded = () => {
+              newAudio.removeEventListener('ended', handleEnded)
+              resolve()
+            }
+            newAudio.addEventListener('ended', handleEnded)
+          })
+          
           await newAudio.play()
           console.log('Coin sound played with new instance')
+          
+          // Wait for new audio to finish
+          await newAudioPromise
+          console.log('New audio instance finished playing')
+          
         } catch (secondError) {
           console.log('Second audio attempt failed:', secondError)
-          // Continue with game even if audio fails
+          // Add a minimum delay even if audio fails
+          await new Promise(resolve => setTimeout(resolve, 1000))
         }
       }
+    } else {
+      // Add a minimum delay if no audio
+      await new Promise(resolve => setTimeout(resolve, 1000))
     }
+    
+    setIsPlayingSound(false)
   }
 
   const handleStart = async () => {
     await playCoinSound()
-    // Small delay to let the sound start playing before transition
-    setTimeout(() => {
-      onStart()
-    }, 200)
+    // Audio has finished playing, now start the game
+    onStart()
   }
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // Don't handle key presses while sound is playing
+      if (isPlayingSound) return
+      
       if (e.key === "Enter" || e.key === "1") {
         handleStart()
       }
@@ -90,7 +129,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
 
     window.addEventListener("keydown", handleKeyPress)
     return () => window.removeEventListener("keydown", handleKeyPress)
-  }, [])
+  }, [isPlayingSound])
 
   const handleNoClick = () => {
     document.dispatchEvent(new CustomEvent("turnOffScreen"))
@@ -118,13 +157,27 @@ export function StartScreen({ onStart }: StartScreenProps) {
               <div className="flex justify-center items-center space-x-16 text-xl">
                 <button
                   onClick={handleStart}
-                  className="hover:bg-green-400 hover:text-black px-4 py-2 transition-colors focus:outline-none focus:bg-green-400 focus:text-black border border-green-400"
+                  disabled={isPlayingSound}
+                  className={`px-4 py-2 transition-colors focus:outline-none border border-green-400 ${
+                    isPlayingSound 
+                      ? 'bg-green-400 text-black opacity-75 cursor-wait' 
+                      : 'hover:bg-green-400 hover:text-black focus:bg-green-400 focus:text-black'
+                  }`}
                 >
-                  <TypeWriter text="▶ YES" speed={35} delay={150} />
+                  {isPlayingSound ? (
+                    <TypeWriter text="♪ PLAYING..." speed={35} />
+                  ) : (
+                    <TypeWriter text="▶ YES" speed={35} delay={150} />
+                  )}
                 </button>
                 <button
                   onClick={handleNoClick}
-                  className="px-4 py-2 opacity-50 hover:opacity-100 hover:bg-red-400 hover:text-black transition-colors focus:outline-none focus:bg-red-400 focus:text-black border border-red-400"
+                  disabled={isPlayingSound}
+                  className={`px-4 py-2 transition-colors focus:outline-none border border-red-400 ${
+                    isPlayingSound 
+                      ? 'opacity-25 cursor-not-allowed' 
+                      : 'opacity-50 hover:opacity-100 hover:bg-red-400 hover:text-black focus:bg-red-400 focus:text-black'
+                  }`}
                 >
                   <TypeWriter text="NO" speed={35} delay={250} />
                 </button>
@@ -133,7 +186,11 @@ export function StartScreen({ onStart }: StartScreenProps) {
 
             {currentStep >= 3 && (
               <div className={`text-sm mt-12 ${blinkVisible ? "opacity-100" : "opacity-0"} transition-opacity`}>
-                <TypeWriter text="PRESS ENTER OR CLICK YES TO START" speed={30} delay={500} />
+                {isPlayingSound ? (
+                  <TypeWriter text="♪ COIN SOUND PLAYING..." speed={30} />
+                ) : (
+                  <TypeWriter text="PRESS ENTER OR CLICK YES TO START" speed={30} delay={500} />
+                )}
               </div>
             )}
           </>
