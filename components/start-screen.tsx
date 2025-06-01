@@ -13,8 +13,12 @@ export function StartScreen({ onStart }: StartScreenProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    // Initialize audio
-    audioRef.current = new Audio('/arcade-portfolio/coin-sound.mp3')
+    // Initialize audio with correct GitHub Pages path
+    const audioPath = process.env.NODE_ENV === 'development' 
+      ? '/coin-sound.mp3' 
+      : '/arcade-portfolio/coin-sound.mp3'
+    
+    audioRef.current = new Audio(audioPath)
     audioRef.current.volume = 0.7 // Set volume to 70%
     
     // Preload the audio
@@ -36,23 +40,42 @@ export function StartScreen({ onStart }: StartScreenProps) {
     return () => clearInterval(interval)
   }, [])
 
-  const playCoinSound = () => {
+  const playCoinSound = async () => {
     if (audioRef.current) {
-      // Reset the audio to the beginning and play
-      audioRef.current.currentTime = 0
-      audioRef.current.play().catch((error) => {
+      try {
+        // Reset the audio to the beginning
+        audioRef.current.currentTime = 0
+        
+        // Try to play the audio
+        await audioRef.current.play()
+        console.log('Coin sound played successfully')
+      } catch (error) {
         console.log('Audio play failed:', error)
-        // Fallback: still continue with the game even if audio fails
-      })
+        
+        // Try to create a new audio instance if the first one failed
+        try {
+          const audioPath = process.env.NODE_ENV === 'development' 
+            ? '/coin-sound.mp3' 
+            : '/arcade-portfolio/coin-sound.mp3'
+          
+          const newAudio = new Audio(audioPath)
+          newAudio.volume = 0.7
+          await newAudio.play()
+          console.log('Coin sound played with new instance')
+        } catch (secondError) {
+          console.log('Second audio attempt failed:', secondError)
+          // Continue with game even if audio fails
+        }
+      }
     }
   }
 
-  const handleStart = () => {
-    playCoinSound()
+  const handleStart = async () => {
+    await playCoinSound()
     // Small delay to let the sound start playing before transition
     setTimeout(() => {
       onStart()
-    }, 100)
+    }, 200)
   }
 
   useEffect(() => {

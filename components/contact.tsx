@@ -105,6 +105,24 @@ export function Contact({ onBack }: ContactProps) {
                     <div>
                       <TypeWriter text="🌍 Remote" speed={25} delay={1100} />
                     </div>
+                    <div className="mt-4 space-y-2">
+                      <a 
+                        href="https://github.com/FGGen" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block hover:bg-green-400 hover:text-black px-2 py-1 transition-colors border border-green-400 text-center"
+                      >
+                        <TypeWriter text="🔗 GITHUB: FGGen" speed={25} delay={1300} />
+                      </a>
+                      <a 
+                        href="https://www.linkedin.com/in/franco-gentile" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block hover:bg-green-400 hover:text-black px-2 py-1 transition-colors border border-green-400 text-center"
+                      >
+                        <TypeWriter text="💼 LINKEDIN: Franco Gentile" speed={25} delay={1500} />
+                      </a>
+                    </div>
                   </div>
 
                   <div className="mt-4 md:mt-6 text-xs opacity-70">
